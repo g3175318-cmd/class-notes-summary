@@ -355,7 +355,7 @@ const styles = `
   }
   .summary-content li:last-child { border-bottom: none; }
   .summary-content ul li::before {
-    content: '→';
+    content: '\u2192';
     position: absolute;
     left: 0;
     color: #6a8c4a;
@@ -488,42 +488,15 @@ export default function App() {
     setError("");
     setSummary("");
 
-    const systemPrompt = `You are GHOST — a precision note distillation engine for professionals. Your job is to transform raw class notes, lectures, or transcripts into crystal-clear structured summaries.
-
-Always respond using markdown with these sections (use ## for headings):
-
-## 🎯 Core Topic
-One-sentence description of what the session covered.
-
-## 📌 Key Concepts
-Bullet list of the most important concepts introduced.
-
-## 📖 Detailed Summary
-Flowing narrative summary of the content, organized by subtopic (use ### for subtopics). Be comprehensive but concise.
-
-## ✅ Takeaways & Action Items
-Numbered list of what to remember, practice, or do next.
-
-## 🔑 Quick Reference
-A tight bullet list of definitions, formulas, or facts to review.
-
-Use **bold** for critical terms. Be sharp, structured, and professional.`;
-
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/summarize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          system: systemPrompt,
-          messages: [{ role: "user", content: `Here are my raw class notes:\n\n${notes}` }],
-        }),
+        body: JSON.stringify({ notes }),
       });
       const data = await response.json();
-      if (data.error) throw new Error(data.error.message);
-      const text = data.content?.map((b) => b.text || "").join("") || "";
-      setSummary(text);
+      if (!response.ok) throw new Error(data.error || "Something went wrong.");
+      setSummary(data.summary);
       setTimeout(() => outputRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch (e) {
       setError(e.message || "Something went wrong. Please try again.");
