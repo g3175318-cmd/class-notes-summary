@@ -627,7 +627,7 @@ Use **bold** for critical terms. Be sharp, structured, and professional.`;
             </div>
           )}
 
-          <p className="footer-note">Powered by Claude · Built for focused professionals</p>
+          <p className="footer-note">Powered by Amlan Dey(GHOST)· Built for focused professionals</p>
         </div>
       </div>
     </>
